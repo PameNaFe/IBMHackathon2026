@@ -1,0 +1,98 @@
+### Login admin
+POST http://localhost:3001/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@corporativoalpha.com",
+  "contrasena": "Admin123"
+}
+
+
+### Login colaborador
+POST http://localhost:3001/auth/login
+Content-Type: application/json
+
+{
+  "email": "carlos.mendez@corporativoalpha.com",
+  "contrasena": "User123"
+}
+
+
+
+### Login admin
+POST http://localhost:3001/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@corporativoalpha.com",
+  "contrasena": "Admin123"
+}
+
+### Login colaborador
+POST http://localhost:3001/auth/login
+Content-Type: application/json
+
+{
+  "email": "carlos.mendez@corporativoalpha.com",
+  "contrasena": "User123"
+}
+
+### Crear reserva (pega token de colaborador)
+POST http://localhost:3002/bookings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJjYXJsb3MubWVuZGV6QGNvcnBvcmF0aXZvYWxwaGEuY29tIiwibm9tYnJlIjoiQ2FybG9zIE3DqW5kZXoiLCJwZXJmaWwiOiJDT0xBQk9SQURPUiIsImlhdCI6MTc4MjE2ODg0MiwiZXhwIjoxNzgyMjU1MjQyfQ.uBBlB8R_HW_wSLeF1CcuIezmwQUxw7el6p31Rl_oVLg
+Content-Type: application/json
+
+{
+  "espacio_id": 2,
+  "hora_entrada": "2026-06-23T09:00:00",
+  "hora_salida": "2026-06-23T10:00:00",
+  "asistentes": 5
+}
+
+### Mis reservas
+GET http://localhost:3002/bookings/mine
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJjYXJsb3MubWVuZGV6QGNvcnBvcmF0aXZvYWxwaGEuY29tIiwibm9tYnJlIjoiQ2FybG9zIE3DqW5kZXoiLCJwZXJmaWwiOiJDT0xBQk9SQURPUiIsImlhdCI6MTc4MjE2ODg0MiwiZXhwIjoxNzgyMjU1MjQyfQ.uBBlB8R_HW_wSLeF1CcuIezmwQUxw7el6p31Rl_oVLg
+
+### Dashboard hoy (solo admin)
+GET http://localhost:3002/bookings/today
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBjb3Jwb3JhdGl2b2FscGhhLmNvbSIsIm5vbWJyZSI6IkFkbWluaXN0cmFkb3IiLCJwZXJmaWwiOiJBRE1JTklTVFJBRE9SIiwiaWF0IjoxNzgyMTY4Njg5LCJleHAiOjE3ODIyNTUwODl9.COYFU1V8NfgGYIS2oJjJmDdgyuhB3gT0f87YG_1TtWo
+
+### Intentar reserva solapada (debe dar 409)
+POST http://localhost:3002/bookings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJjYXJsb3MubWVuZGV6QGNvcnBvcmF0aXZvYWxwaGEuY29tIiwibm9tYnJlIjoiQ2FybG9zIE3DqW5kZXoiLCJwZXJmaWwiOiJDT0xBQk9SQURPUiIsImlhdCI6MTc4MjE2ODg0MiwiZXhwIjoxNzgyMjU1MjQyfQ.uBBlB8R_HW_wSLeF1CcuIezmwQUxw7el6p31Rl_oVLg
+Content-Type: application/json
+
+{
+  "espacio_id": 2,
+  "hora_entrada": "2026-06-23T09:30:00",
+  "hora_salida": "2026-06-23T10:30:00",
+  "asistentes": 5
+}
+
+### Intentar reserva en el pasado (debe dar 400)
+POST http://localhost:3002/bookings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJjYXJsb3MubWVuZGV6QGNvcnBvcmF0aXZvYWxwaGEuY29tIiwibm9tYnJlIjoiQ2FybG9zIE3DqW5kZXoiLCJwZXJmaWwiOiJDT0xBQk9SQURPUiIsImlhdCI6MTc4MjE2ODg0MiwiZXhwIjoxNzgyMjU1MjQyfQ.uBBlB8R_HW_wSLeF1CcuIezmwQUxw7el6p31Rl_oVLg
+Content-Type: application/json
+
+{
+  "espacio_id": 2,
+  "hora_entrada": "2024-01-01T09:00:00",
+  "hora_salida": "2024-01-01T10:00:00",
+  "asistentes": 5
+}
+
+### Intentar exceder capacidad (debe dar 400)
+POST http://localhost:3002/bookings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJjYXJsb3MubWVuZGV6QGNvcnBvcmF0aXZvYWxwaGEuY29tIiwibm9tYnJlIjoiQ2FybG9zIE3DqW5kZXoiLCJwZXJmaWwiOiJDT0xBQk9SQURPUiIsImlhdCI6MTc4MjE2ODg0MiwiZXhwIjoxNzgyMjU1MjQyfQ.uBBlB8R_HW_wSLeF1CcuIezmwQUxw7el6p31Rl_oVLg
+Content-Type: application/json
+
+{
+  "espacio_id": 3,
+  "hora_entrada": "2026-06-23T11:00:00",
+  "hora_salida": "2026-06-23T12:00:00",
+  "asistentes": 99
+}
+
+### Cancelar reserva
+DELETE http://localhost:3002/bookings/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJjYXJsb3MubWVuZGV6QGNvcnBvcmF0aXZvYWxwaGEuY29tIiwibm9tYnJlIjoiQ2FybG9zIE3DqW5kZXoiLCJwZXJmaWwiOiJDT0xBQk9SQURPUiIsImlhdCI6MTc4MjE2ODg0MiwiZXhwIjoxNzgyMjU1MjQyfQ.uBBlB8R_HW_wSLeF1CcuIezmwQUxw7el6p31Rl_oVLg
