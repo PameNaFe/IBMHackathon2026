@@ -51,4 +51,22 @@ const cancel = async (req, res) => {
   }
 };
 
-module.exports = { getMine, getToday, create, cancel };
+const getAvailable = async (req, res) => {
+  try {
+    const { hora_entrada, hora_salida, tipo, capacidad } = req.query;
+
+    if (!hora_entrada || !hora_salida) {
+      return res.status(400).json({ error: 'hora_entrada y hora_salida son obligatorios' });
+    }
+
+    const spaces = await bookingService.getAvailableSpaces({
+      hora_entrada, hora_salida, tipo, capacidad
+    });
+
+    res.json(spaces);
+  } catch (err) {
+    res.status(500).json({ error: 'Error al buscar disponibilidad', detail: err.message });
+  }
+};
+
+module.exports = { getMine, getToday, create, cancel, getAvailable };

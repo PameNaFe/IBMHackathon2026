@@ -100,4 +100,32 @@ const cancel = async (id, usuario_id) => {
   return updated.rows[0];
 };
 
-module.exports = { getAll, getToday, create, cancel };
+const getAvailableSpaces = async ({ hora_entrada, hora_salida, tipo, capacidad }) => {
+  let query = `
+    SELECT * FROM espacios
+    WHERE disponible = true
+    AND id NOT IN (
+      SELECT espacio_id FROM reservaciones
+      WHERE status = 'CONFIRMED'
+        AND hora_entrada < $2
+        AND hora_salida  > $1
+    )
+  `;
+  const params = [hora_entrada, hora_salida];
+
+  if (tipo) {
+    params.push(tipo.toUpperCase());
+    query += ` AND tipo = $${params.length}`;
+  }
+
+  if (capacidad) {
+    params.push(parseInt(capacidad));
+    query += ` AND capacidad >= $${params.length}`;
+  }
+
+  query += ` ORDER BY id ASC`;
+  const result = await pool.query(query, params);
+  return result.rows;
+};
+
+module.exports = { getAll, getToday, create, cancel, getAvailableSpaces };
