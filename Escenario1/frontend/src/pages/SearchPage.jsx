@@ -4,9 +4,7 @@ import BookingModal from '../components/BookingModal';
 
 const SearchPage = ({ onGoToBookings }) => {
   const [spaces, setSpaces] = useState([]);
-  const [filters, setFilters] = useState({
-    tipo: '', capacidad: '', hora_entrada: '', hora_salida: ''
-  });
+  const [filters, setFilters] = useState({ tipo: '', capacidad: '', hora_entrada: '', hora_salida: '' });
   const [loading, setLoading] = useState(false);
   const [selectedSpace, setSelectedSpace] = useState(null);
   const [busquedaPorHorario, setBusquedaPorHorario] = useState(false);
@@ -40,105 +38,105 @@ const SearchPage = ({ onGoToBookings }) => {
   };
 
   const handleLimpiar = async () => {
-    const resetFilters = { tipo: '', capacidad: '', hora_entrada: '', hora_salida: '' };
-    setFilters(resetFilters);
+    const reset = { tipo: '', capacidad: '', hora_entrada: '', hora_salida: '' };
+    setFilters(reset);
     setBusquedaPorHorario(false);
-    await fetchSpaces(resetFilters);
+    await fetchSpaces(reset);
   };
 
   useEffect(() => { fetchSpaces(); }, []);
 
-  const hayFiltrosActivos = filters.hora_entrada || filters.hora_salida || filters.tipo || filters.capacidad;
+  const hayFiltros = filters.hora_entrada || filters.hora_salida || filters.tipo || filters.capacidad;
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
-      <h2 style={{ marginBottom: '1.5rem', color: '#1a1a2e' }}>Buscar Espacios</h2>
+    <div style={{ padding: '2rem', maxWidth: '1280px', margin: '0 auto' }}>
+      <div style={{ marginBottom: '1.5rem' }}>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--gray-800)' }}>
+          Buscar Espacios
+        </h2>
+        <p style={{ color: 'var(--gray-400)', fontSize: '0.9rem' }}>
+          Selecciona un horario para ver disponibilidad en tiempo real
+        </p>
+      </div>
 
       {/* Filtros */}
       <div style={{
-        background: 'white', padding: '1.5rem', borderRadius: '10px',
-        marginBottom: '2rem', boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
-        display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-end'
+        background: 'white', padding: '1.5rem', borderRadius: 'var(--radius)',
+        marginBottom: '1.5rem', boxShadow: 'var(--shadow-sm)',
+        border: '1px solid var(--gray-200)'
       }}>
-        <div>
-          <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>
-            Fecha y hora de entrada
-          </label>
-          <input
-            type="datetime-local"
-            value={filters.hora_entrada}
-            onChange={e => setFilters({ ...filters, hora_entrada: e.target.value })}
-            style={{ padding: '0.6rem', borderRadius: '6px', border: '1px solid #ddd' }}
-          />
-        </div>
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+          {[
+            { label: 'Fecha y hora de entrada', key: 'hora_entrada', type: 'datetime-local' },
+            { label: 'Fecha y hora de salida', key: 'hora_salida', type: 'datetime-local' },
+          ].map(({ label, key, type }) => (
+            <div key={key}>
+              <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, fontSize: '0.85rem', color: 'var(--gray-600)' }}>
+                {label}
+              </label>
+              <input type={type} value={filters[key]}
+                onChange={e => setFilters({ ...filters, [key]: e.target.value })}
+                style={{
+                  padding: '0.6rem 0.8rem', borderRadius: 'var(--radius-sm)',
+                  border: '2px solid var(--gray-200)', fontSize: '0.9rem', outline: 'none'
+                }} />
+            </div>
+          ))}
 
-        <div>
-          <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>
-            Fecha y hora de salida
-          </label>
-          <input
-            type="datetime-local"
-            value={filters.hora_salida}
-            onChange={e => setFilters({ ...filters, hora_salida: e.target.value })}
-            style={{ padding: '0.6rem', borderRadius: '6px', border: '1px solid #ddd' }}
-          />
-        </div>
+          <div>
+            <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, fontSize: '0.85rem', color: 'var(--gray-600)' }}>
+              Tipo
+            </label>
+            <select value={filters.tipo} onChange={e => setFilters({ ...filters, tipo: e.target.value })}
+              style={{ padding: '0.6rem 1rem', borderRadius: 'var(--radius-sm)', border: '2px solid var(--gray-200)', fontSize: '0.9rem', background: 'white' }}>
+              <option value="">Todos</option>
+              <option value="SALA">Sala</option>
+              <option value="DESK">Escritorio</option>
+            </select>
+          </div>
 
-        <div>
-          <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>
-            Tipo
-          </label>
-          <select
-            value={filters.tipo}
-            onChange={e => setFilters({ ...filters, tipo: e.target.value })}
-            style={{ padding: '0.6rem 1rem', borderRadius: '6px', border: '1px solid #ddd' }}>
-            <option value="">Todos</option>
-            <option value="SALA">Sala</option>
-            <option value="DESK">Escritorio</option>
-          </select>
-        </div>
+          <div>
+            <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600, fontSize: '0.85rem', color: 'var(--gray-600)' }}>
+              Capacidad mín.
+            </label>
+            <input type="number" min="1" value={filters.capacidad}
+              onChange={e => setFilters({ ...filters, capacidad: e.target.value })}
+              placeholder="Ej: 6"
+              style={{ padding: '0.6rem 0.8rem', borderRadius: 'var(--radius-sm)', border: '2px solid var(--gray-200)', width: '100px', fontSize: '0.9rem' }} />
+          </div>
 
-        <div>
-          <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>
-            Capacidad mínima
-          </label>
-          <input
-            type="number" min="1"
-            value={filters.capacidad}
-            onChange={e => setFilters({ ...filters, capacidad: e.target.value })}
-            placeholder="Ej: 6"
-            style={{ padding: '0.6rem', borderRadius: '6px', border: '1px solid #ddd', width: '100px' }}
-          />
-        </div>
-
-        <button
-          onClick={() => fetchSpaces()}
-          style={{
-            padding: '0.65rem 1.5rem', background: '#1a1a2e',
-            color: 'white', border: 'none', borderRadius: '6px', fontWeight: 600
+          <button onClick={() => fetchSpaces()} style={{
+            padding: '0.65rem 1.5rem',
+            background: 'linear-gradient(135deg, var(--primary), var(--accent))',
+            color: 'white', border: 'none', borderRadius: 'var(--radius-sm)',
+            fontWeight: 700, fontSize: '0.9rem',
+            boxShadow: '0 4px 12px rgba(124,58,237,0.3)'
           }}>
-          🔍 Buscar
-        </button>
-
-        {hayFiltrosActivos && (
-          <button
-            onClick={handleLimpiar}
-            style={{
-              padding: '0.65rem 1rem', background: '#f0f2f5',
-              border: 'none', borderRadius: '6px', fontWeight: 600
-            }}>
-            ✕ Limpiar
+            🔍 Buscar
           </button>
-        )}
+
+          {hayFiltros && (
+            <button onClick={handleLimpiar} style={{
+              padding: '0.65rem 1rem', background: 'var(--gray-100)',
+              border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-sm)',
+              fontWeight: 600, color: 'var(--gray-600)', fontSize: '0.9rem'
+            }}>
+              ✕ Limpiar
+            </button>
+          )}
+        </div>
       </div>
 
+      {/* Banner disponibilidad */}
       {busquedaPorHorario && filters.hora_entrada && filters.hora_salida && (
         <div style={{
-          background: '#e3f2fd', padding: '0.75rem 1rem',
-          borderRadius: '6px', marginBottom: '1.5rem',
-          color: '#1565c0', fontSize: '0.9rem'
+          background: 'var(--primary-light)', padding: '0.75rem 1rem',
+          borderRadius: 'var(--radius-sm)', marginBottom: '1.5rem',
+          color: 'var(--primary)', fontSize: '0.875rem', fontWeight: 600,
+          border: '1px solid rgba(124,58,237,0.2)',
+          display: 'flex', alignItems: 'center', gap: '0.5rem'
         }}>
-          📅 Mostrando espacios disponibles del{' '}
+          ✅ Espacios disponibles del{' '}
           <strong>{new Date(filters.hora_entrada).toLocaleString('es-MX')}</strong>
           {' al '}
           <strong>{new Date(filters.hora_salida).toLocaleString('es-MX')}</strong>
@@ -147,55 +145,22 @@ const SearchPage = ({ onGoToBookings }) => {
 
       {/* Resultados */}
       {loading ? (
-        <p>Cargando espacios...</p>
-      ) : (
+        <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--gray-400)' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>⏳</div>
+          Cargando espacios...
+        </div>
+      ) : spaces.length === 0 ? (
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-          gap: '1.5rem'
+          background: 'white', padding: '3rem', borderRadius: 'var(--radius)',
+          textAlign: 'center', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--gray-200)'
         }}>
-          {spaces.length === 0 ? (
-            <p style={{ color: '#666' }}>No se encontraron espacios disponibles.</p>
-          ) : spaces.map(space => (
-            <div key={space.id} style={{
-              background: 'white', borderRadius: '10px',
-              padding: '1.5rem', boxShadow: '0 2px 10px rgba(0,0,0,0.08)'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                <h3 style={{ color: '#1a1a2e' }}>{space.nombre}</h3>
-                <span style={{
-                  background: space.tipo === 'SALA' ? '#e3f2fd' : '#f3e5f5',
-                  color: space.tipo === 'SALA' ? '#1565c0' : '#6a1b9a',
-                  padding: '0.2rem 0.6rem', borderRadius: '20px', fontSize: '0.8rem'
-                }}>
-                  {space.tipo}
-                </span>
-              </div>
-
-              <p style={{ color: '#666', fontSize: '0.9rem', marginBottom: '0.3rem' }}>
-                📍 {space.piso}
-              </p>
-              <p style={{ color: '#666', fontSize: '0.9rem', marginBottom: '1rem' }}>
-                👥 Capacidad: {space.capacidad} personas
-              </p>
-
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-                {space.con_proyector && <span style={tagStyle}>📽 Proyector</span>}
-                {space.con_aire && <span style={tagStyle}>❄️ Aire</span>}
-                {space.con_pizarron && <span style={tagStyle}>📋 Pizarrón</span>}
-                {space.con_tv && <span style={tagStyle}>📺 TV</span>}
-              </div>
-
-              <button
-                onClick={() => setSelectedSpace(space)}
-                style={{
-                  width: '100%', padding: '0.65rem',
-                  background: '#e94560', color: 'white',
-                  border: 'none', borderRadius: '6px', fontWeight: 600
-                }}>
-                Reservar
-              </button>
-            </div>
+          <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🔍</div>
+          <p style={{ color: 'var(--gray-600)', fontSize: '1rem' }}>No se encontraron espacios con esos filtros</p>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.25rem' }}>
+          {spaces.map(space => (
+            <SpaceCard key={space.id} space={space} onReservar={() => setSelectedSpace(space)} />
           ))}
         </div>
       )}
@@ -206,10 +171,7 @@ const SearchPage = ({ onGoToBookings }) => {
           initialHoraEntrada={filters.hora_entrada}
           initialHoraSalida={filters.hora_salida}
           onClose={() => setSelectedSpace(null)}
-          onSuccess={() => {
-            setSelectedSpace(null);
-            fetchSpaces();
-          }}
+          onSuccess={() => { setSelectedSpace(null); fetchSpaces(); }}
           onGoToBookings={onGoToBookings}
         />
       )}
@@ -217,9 +179,74 @@ const SearchPage = ({ onGoToBookings }) => {
   );
 };
 
-const tagStyle = {
-  background: '#f0f2f5', padding: '0.2rem 0.6rem',
-  borderRadius: '20px', fontSize: '0.8rem', color: '#555'
+const SpaceCard = ({ space, onReservar }) => {
+  const recursos = [
+    { key: 'con_proyector', icon: '📽', label: 'Proyector' },
+    { key: 'con_aire', icon: '❄️', label: 'Aire' },
+    { key: 'con_pizarron', icon: '📋', label: 'Pizarrón' },
+    { key: 'con_tv', icon: '📺', label: 'TV' },
+  ].filter(r => space[r.key]);
+
+  return (
+    <div style={{
+      background: 'white', borderRadius: 'var(--radius)',
+      padding: '1.5rem', boxShadow: 'var(--shadow-sm)',
+      border: '1px solid var(--gray-200)', transition: 'all 0.2s',
+      display: 'flex', flexDirection: 'column', gap: '0.75rem'
+    }}
+      onMouseEnter={e => { e.currentTarget.style.boxShadow = 'var(--shadow-md)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+      onMouseLeave={e => { e.currentTarget.style.boxShadow = 'var(--shadow-sm)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <h3 style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--gray-800)' }}>{space.nombre}</h3>
+          <p style={{ color: 'var(--gray-400)', fontSize: '0.85rem', marginTop: '0.2rem' }}>📍 {space.piso}</p>
+        </div>
+        <span style={{
+          background: space.tipo === 'SALA' ? 'var(--primary-light)' : 'var(--accent-light)',
+          color: space.tipo === 'SALA' ? 'var(--primary)' : 'var(--accent)',
+          padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700
+        }}>
+          {space.tipo}
+        </span>
+      </div>
+
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: '0.5rem',
+        background: 'var(--gray-50)', padding: '0.5rem 0.75rem',
+        borderRadius: 'var(--radius-sm)'
+      }}>
+        <span style={{ fontSize: '1.1rem' }}>👥</span>
+        <span style={{ fontWeight: 600, color: 'var(--gray-600)', fontSize: '0.9rem' }}>
+          {space.capacidad} personas
+        </span>
+      </div>
+
+      {recursos.length > 0 && (
+        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+          {recursos.map(r => (
+            <span key={r.key} style={{
+              background: 'var(--gray-100)', padding: '0.2rem 0.6rem',
+              borderRadius: '20px', fontSize: '0.75rem', color: 'var(--gray-600)',
+              display: 'flex', alignItems: 'center', gap: '0.3rem'
+            }}>
+              {r.icon} {r.label}
+            </span>
+          ))}
+        </div>
+      )}
+
+      <button onClick={onReservar} style={{
+        width: '100%', padding: '0.7rem',
+        background: 'linear-gradient(135deg, var(--primary), var(--accent))',
+        color: 'white', border: 'none', borderRadius: 'var(--radius-sm)',
+        fontWeight: 700, fontSize: '0.9rem', marginTop: 'auto',
+        boxShadow: '0 4px 12px rgba(124,58,237,0.3)'
+      }}>
+        Reservar →
+      </button>
+    </div>
+  );
 };
 
 export default SearchPage;

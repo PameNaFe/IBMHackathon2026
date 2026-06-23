@@ -18,7 +18,6 @@ Content-Type: application/json
 }
 
 
-
 ### Login admin
 POST http://localhost:3001/auth/login
 Content-Type: application/json
